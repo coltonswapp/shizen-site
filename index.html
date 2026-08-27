@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shizen — Learn Japanese in the conversation</title>
+    <meta
+      name="description"
+      content="Shizen is an iPhone app for learning Japanese by listening, then speaking. Join the waitlist."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="top">
+      <span class="mark">Shizen</span>
+    </header>
+
+    <main class="hero">
+      <section class="copy">
+        <p class="kicker">Coming to iPhone</p>
+        <h1>Learn Japanese by being in the conversation.</h1>
+        <p class="lede">
+          Listen cold. Catch the meaning. Step into the other person’s line.
+        </p>
+
+        <form id="waitlist" class="waitlist" novalidate>
+          <label class="sr-only" for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            inputmode="email"
+            placeholder="you@email.com"
+            required
+          />
+          <button type="submit">Join the waitlist</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="device" aria-label="Shizen app preview">
+        <div class="phone">
+          <div class="notch" aria-hidden="true"></div>
+          <div class="screen">
+            <p class="stage">Kaito knocks at his neighbor’s door</p>
+            <div class="bubble a">
+              <span class="who">Mika</span>
+              <p lang="ja">はい、どうぞ。</p>
+            </div>
+            <div class="bubble b">
+              <span class="who">Kaito</span>
+              <p lang="ja">すみません、隣の海人です。</p>
+            </div>
+            <div class="bubble a">
+              <span class="who">Mika</span>
+              <p lang="ja">あ、引っ越してきた方ですね。</p>
+            </div>
+            <div class="listen">
+              <span class="dot"></span>
+              Listening
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>shizenapp.com</span>
+    </footer>
+    <script src="./app.js"></script>
+  </body>
+</html>
