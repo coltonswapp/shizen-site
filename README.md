@@ -16,7 +16,8 @@ Open the printed localhost URL. Without `--kv WAITLIST`, joining the list return
 
 1. In Cloudflare, Workers & Pages → Create → Connect GitHub → `coltonswapp/shizen-site`.
 2. Project name `shizen-site`. Production branch `main`. Build command empty. Output directory `/`.
-3. Create a KV namespace (e.g. `shizen-waitlist`) and bind it to the project as `WAITLIST`.
-4. Custom domains → `shizenapp.com` (the zone already lives in this Cloudflare account). Put the KV id into `wrangler.toml` if you also deploy from the CLI.
+3. Storage & Databases → KV → Create `shizen-waitlist`.
+4. Pages project → Settings → Bindings → Add → KV namespace. Variable name `WAITLIST`, pick that namespace. Do not put a placeholder id in wrangler.toml.
+5. Custom domains → `shizenapp.com` (the zone already lives in this Cloudflare account).
 
 The function never logs the email. Duplicate signups return 409; the page treats that as already on the list.
