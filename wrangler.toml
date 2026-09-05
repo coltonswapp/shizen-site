@@ -2,6 +2,14 @@ name = "shizen-site"
 compatibility_date = "2026-08-27"
 pages_build_output_dir = "."
 
-# WAITLIST KV is bound in the Pages project settings, not here.
-# A placeholder id here makes Git deploys fail (error 8000022).
-# Local: npx wrangler pages dev . --kv WAITLIST
+[[kv_namespaces]]
+binding = "WAITLIST"
+id = "866652b0b0ff4c278c94f84d939c7f10"
+
+[[env.preview.kv_namespaces]]
+binding = "WAITLIST"
+id = "866652b0b0ff4c278c94f84d939c7f10"
+
+[[env.production.kv_namespaces]]
+binding = "WAITLIST"
+id = "866652b0b0ff4c278c94f84d939c7f10"
