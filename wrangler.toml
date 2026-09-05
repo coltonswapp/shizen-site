@@ -13,3 +13,8 @@ id = "866652b0b0ff4c278c94f84d939c7f10"
 [[env.production.kv_namespaces]]
 binding = "WAITLIST"
 id = "866652b0b0ff4c278c94f84d939c7f10"
+
+# Public webhook endpoint (not a secret). Sender key is a Pages Secret:
+# WAITLIST_WEBHOOK_KEY — set in Cloudflare Dashboard → Variables and secrets.
+[vars]
+WAITLIST_WEBHOOK_URL = "https://api2.cursor.sh/automations/webhook/1c7b5e43-dcd2-5622-a649-cf1c0a486bd8"
