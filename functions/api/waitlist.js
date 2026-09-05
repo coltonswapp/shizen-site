@@ -18,6 +18,32 @@ function json(data, status = 200) {
   });
 }
 
+/** Fire-and-forget ping to the Grok Bot waitlist webhook. Never fails the signup. */
+async function notifySignup(env, email) {
+  const url = env.WAITLIST_WEBHOOK_URL;
+  const key = env.WAITLIST_WEBHOOK_KEY;
+  if (!url || !key) return;
+
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+        "X-Automation-Key": key,
+      },
+      body: JSON.stringify({
+        email,
+        at: new Date().toISOString(),
+        source: "shizenapp.com",
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Signup already persisted; a missed ping is better than a failed join.
+  }
+}
+
 export async function onRequestPost(context) {
   const kv = context.env.WAITLIST;
   if (!kv) {
@@ -44,10 +70,10 @@ export async function onRequestPost(context) {
     return json({ ok: true, already: true }, 409);
   }
 
-  await kv.put(
-    email,
-    JSON.stringify({ at: new Date().toISOString() })
-  );
+  const at = new Date().toISOString();
+  await kv.put(email, JSON.stringify({ at }));
+  // Only notify on brand-new signups (not 409 duplicates).
+  context.waitUntil(notifySignup(context.env, email));
   return json({ ok: true });
 }
 
