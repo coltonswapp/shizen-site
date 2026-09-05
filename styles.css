@@ -1,43 +1,31 @@
 :root {
-  --bg: #0c0d0b;
-  --bg-2: #141512;
-  --ink: #f3eee4;
-  --muted: #9b9588;
-  --line: rgba(243, 238, 228, 0.12);
-  --moss: #b7c4a0;
-  --moss-ink: #141512;
-  --phone: #1a1b18;
-  --screen: #11120f;
-  --a: #2a2c27;
-  --b: #24352a;
+  --bg: #ffffff;
+  --ink: #000000;
+  --muted: #8e8e93;
+  --fill: #f2f2f2;
+  --line: #e5e5ea;
+  --yellow: #ffcc00;
+  --yellow-press: #f0c000;
+  --phone: #1c1c1e;
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
 body {
-  font-family: Inter, "Segoe UI", sans-serif;
-  background: radial-gradient(1200px 700px at 70% 20%, #1c2218 0%, var(--bg) 55%);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.022em;
+  -webkit-font-smoothing: antialiased;
 }
-
-.grain {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  z-index: 0;
-}
-
-.top, .hero, .foot { position: relative; z-index: 1; }
 
 .top {
   padding: 28px 32px 0;
 }
 .mark {
-  font-family: "Instrument Serif", "Newsreader", serif;
-  font-size: 28px;
+  font-size: 22px;
+  font-weight: 600;
   letter-spacing: -0.03em;
 }
 
@@ -53,20 +41,19 @@ body {
 }
 
 .copy h1 {
-  font-family: "Instrument Serif", "Newsreader", serif;
-  font-weight: 400;
-  font-size: clamp(40px, 5vw, 64px);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-size: clamp(36px, 4.6vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
   margin: 12px 0 16px;
   max-width: 14ch;
 }
 
 .kicker {
-  color: var(--moss);
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   margin: 0;
 }
@@ -74,6 +61,8 @@ body {
 .lede {
   color: var(--muted);
   font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   line-height: 1.45;
   max-width: 32ch;
   margin: 0 0 32px;
@@ -90,29 +79,40 @@ body {
   height: 48px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255,255,255,0.04);
+  background: var(--fill);
   color: var(--ink);
   padding: 0 18px;
   font: inherit;
   font-size: 15px;
   outline: none;
 }
+.waitlist input::placeholder {
+  color: var(--muted);
+}
 .waitlist input:focus {
-  border-color: var(--moss);
+  background: var(--bg);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.35);
 }
 .waitlist button {
   height: 48px;
   border: 0;
   border-radius: 999px;
-  background: var(--moss);
-  color: var(--moss-ink);
+  background: var(--yellow);
+  color: var(--ink);
   font: inherit;
   font-size: 15px;
-  font-weight: 500;
-  padding: 0 20px;
+  font-weight: 600;
+  padding: 0 22px;
   cursor: pointer;
 }
-.waitlist button:disabled { opacity: 0.6; cursor: default; }
+.waitlist button:hover {
+  background: var(--yellow-press);
+}
+.waitlist button:active {
+  transform: scale(0.98);
+}
+.waitlist button:disabled { opacity: 0.6; cursor: default; transform: none; }
 .form-status {
   flex-basis: 100%;
   min-height: 1.3em;
@@ -120,8 +120,8 @@ body {
   font-size: 14px;
   color: var(--muted);
 }
-.form-status.error { color: #e8a0a0; }
-.form-status.ok { color: var(--moss); }
+.form-status.error { color: #d70015; }
+.form-status.ok { color: var(--ink); }
 
 .sr-only {
   position: absolute;
@@ -134,93 +134,19 @@ body {
 .device { display: flex; justify-content: center; }
 .phone {
   width: min(320px, 72vw);
-  aspect-ratio: 9 / 19.2;
   background: var(--phone);
-  border-radius: 44px;
-  padding: 12px;
+  border-radius: 48px;
+  padding: 10px;
   box-shadow:
-    0 40px 80px rgba(0,0,0,0.45),
-    0 0 0 1px rgba(255,255,255,0.06);
-  position: relative;
+    0 28px 64px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
 }
-.notch {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  width: 108px;
-  height: 22px;
-  transform: translateX(-50%);
-  background: #000;
-  border-radius: 20px;
-  z-index: 2;
-}
-.screen {
-  height: 100%;
-  border-radius: 34px;
-  background: var(--screen);
-  padding: 72px 18px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow: hidden;
-}
-.stage {
-  margin: 0 8px 8px;
-  text-align: center;
-  font-family: "Newsreader", serif;
-  font-style: italic;
-  font-size: 13px;
-  color: #8d887c;
-}
-.bubble {
-  max-width: 86%;
-  padding: 10px 12px;
-  border-radius: 18px;
-}
-.bubble p {
-  margin: 4px 0 0;
-  font-family: "Zen Kaku Gothic New", sans-serif;
-  font-size: 16px;
-  line-height: 1.45;
-}
-.who {
+.screen-shot {
   display: block;
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.bubble.a {
-  align-self: flex-start;
-  background: var(--a);
-  border-bottom-left-radius: 6px;
-}
-.bubble.b {
-  align-self: flex-end;
-  background: var(--b);
-  border-bottom-right-radius: 6px;
-}
-.listen {
-  margin-top: auto;
-  align-self: center;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-}
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--moss);
-  box-shadow: 0 0 10px var(--moss);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1); }
+  width: 100%;
+  height: auto;
+  border-radius: 38px;
+  background: var(--fill);
 }
 
 .foot {
@@ -236,6 +162,12 @@ body {
     min-height: unset;
   }
   .copy h1 { max-width: none; }
+  .waitlist { max-width: none; }
+  .waitlist input,
+  .waitlist button {
+    flex: 1 1 100%;
+    width: 100%;
+  }
   .device { order: -1; }
   .phone { width: min(260px, 70vw); }
 }
