@@ -2,202 +2,94 @@
 // Ported from the static homepage script plus app.js. Kept close to the original.
 // @ts-nocheck
 
+import demo from "@/content/demo/takoyaki-booth.json";
+
+const MATTETE_HIGHLIGHT_START = 9.95;
+const CLIP_END = demo.audio.clipEnd ?? 10.4;
+
+function buildDemo() {
+  const highlights = demo.highlights;
+  const nuances = demo.nuances.filter((item) => !item.optional);
+  const dict = {};
+  const furigana = {};
+  const phrases = {};
+
+  const scene = demo.lines.map((line) => {
+    const words = line.tokens.map((token, tokenIndex) => {
+      const highlight = highlights.find(
+        (item) => item.line === line.index && item.tokenStart === tokenIndex,
+      );
+      const nuance = nuances.find(
+        (item) =>
+          item.line === line.index &&
+          tokenIndex >= item.tokenStart &&
+          tokenIndex <= item.tokenEnd,
+      );
+      const start =
+        token.surface === "待ってて" ? MATTETE_HIGHLIGHT_START : token.start;
+      return {
+        surface: token.surface,
+        gloss: highlight?.gloss || nuance?.label || "",
+        note: nuance?.note || "",
+        reading: token.reading || token.surface,
+        start,
+        end: token.end,
+        charStart: token.charStart,
+        charEnd: token.charEnd,
+        highlight: Boolean(highlight),
+        tip: highlight ? `${highlight.reading} — ${highlight.gloss}` : "",
+      };
+    });
+
+    words.forEach((word) => {
+      if (word.reading && word.reading !== word.surface && !furigana[word.surface]) {
+        furigana[word.surface] = [[word.surface, word.reading]];
+      }
+      if (!dict[word.surface]) {
+        dict[word.surface] = {
+          reading: word.reading,
+          lemma: word.surface,
+          romaji: "",
+          kanji: [],
+          definitions: word.gloss ? [[word.gloss, "—", word.note]] : [],
+        };
+      }
+    });
+
+    nuances
+      .filter((item) => item.line === line.index && item.tokenEnd > item.tokenStart)
+      .forEach((item) => {
+        const span = words.slice(item.tokenStart, item.tokenEnd + 1);
+        const surface = span.map((word) => word.surface).join("");
+        phrases[surface] = {
+          reading: span.map((word) => word.reading).join(""),
+          lemma: surface,
+          romaji: "",
+          gloss: item.label,
+          note: item.note,
+          definitions: [[item.label, "—", item.note]],
+        };
+      });
+
+    return {
+      speaker: line.speaker,
+      side: line.speaker === "Mika" ? "trail" : "lead",
+      japanese: line.japanese,
+      english: line.english,
+      start: line.start,
+      end: line.end,
+      words: words.map((word) => [word.surface, word.gloss, word.note]),
+      tokens: words,
+      nuances: nuances.filter((item) => item.line === line.index),
+    };
+  });
+
+  return { scene, dict, furigana, phrases };
+}
+
 export function initHome() {
-
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        const scene = [
-          {
-            speaker: "Mika", side: "trail",
-            japanese: "あれ、まだいたの？何してんの？",
-            english: "Huh, you're still here? What are you up to?",
-            words: [
-              ["あれ", "Huh?", "A surprised \"huh?\", not the あれ that means \"that\"."],
-              ["まだ", "still", ""],
-              ["いた", "were (here)", "Past of いる, \"to be\" for people."],
-              ["の", "softens it into a question", "Casual speech asks with の instead of ですか."],
-              ["何", "what", ""],
-              ["して", "doing", "て-form of する."],
-              ["ん", "る, squashed", "している → してる → してん: る melts into ん before の."],
-              ["の", "softens it into a question", ""],
-            ],
-          },
-          {
-            speaker: "Kaito", side: "lead",
-            japanese: "明日の資料。でも、ぜんぜんわかんない。",
-            english: "Tomorrow's materials. But I don't get any of it.",
-            words: [
-              ["明日", "tomorrow", ""],
-              ["の", "'s, for", "Links 明日 to 資料: tomorrow's materials."],
-              ["資料", "materials", ""],
-              ["でも", "but", ""],
-              ["ぜんぜん", "(not) at all", "Pairs with a negative: ぜんぜん〜ない."],
-              ["わかんない", "don't get it", "わからない, with ら melted into ん."],
-            ],
-          },
-          {
-            speaker: "Mika", side: "trail",
-            japanese: "ごめん、私、行かなきゃ。終電、なくなっちゃう。",
-            english: "Sorry, I've gotta go. I'll miss the last train.",
-            words: [
-              ["ごめん", "sorry", "Casual ごめんなさい."],
-              ["私", "I", ""],
-              ["行か", "go", "行く, in the shape it takes before ない."],
-              ["なきゃ", "have to", "なければならない, cut down to its first beat."],
-              ["終電", "the last train", ""],
-              ["なくなっ", "be gone", "なくなる, \"to disappear\"."],
-              ["ちゃう", "and that would be bad", "Short for てしまう."],
-            ],
-          },
-          {
-            speaker: "Kaito", side: "lead",
-            japanese: "マジか。じゃあ、また明日。",
-            english: "Seriously? Okay. See you tomorrow.",
-            words: [
-              ["マジ", "seriously", "Slang for 本当."],
-              ["か", "a surprised question", ""],
-              ["じゃあ", "well then", ""],
-              ["また", "again", ""],
-              ["明日", "tomorrow", ""],
-            ],
-          },
-        ];
-
-        const dict = {
-          "あれ": { reading: "あれ", lemma: "あれ", romaji: "are", kanji: [], definitions: [
-            ["huh?; eh?", "int", "A little sound of surprise."],
-            ["that", "pn", "Something away from both speakers. Not this あれ."],
-          ]},
-          "まだ": { reading: "まだ", lemma: "まだ", romaji: "mada", kanji: [], definitions: [
-            ["still; not yet", "adv", "The state hasn't changed."],
-          ]},
-          "いた": { reading: "いる", lemma: "いる", romaji: "iru", kanji: [], definitions: [
-            ["to be; to stay", "v", "For people and animals. いた is the plain past."],
-          ]},
-          "の": { reading: "の", lemma: "の", romaji: "no", kanji: [], definitions: [
-            ["soft question", "prt", "Casual speech asks with の instead of ですか."],
-            ["'s; of", "prt", "Links two nouns."],
-          ]},
-          "何": { reading: "なに", lemma: "何", romaji: "nani", kanji: [["何", "what"]], definitions: [
-            ["what", "pn", "Often なん before の, as in 何してんの."],
-          ]},
-          "して": { reading: "する", lemma: "する", romaji: "suru", kanji: [], definitions: [
-            ["to do", "v", "して is the て-form."],
-          ]},
-          "ん": { reading: "ん", lemma: "ん", romaji: "n", kanji: [], definitions: [
-            ["る, squashed", "—", "している → してる → してん before の."],
-          ]},
-          "明日": { reading: "あした", lemma: "明日", romaji: "ashita", kanji: [["明", "bright"], ["日", "day"]], definitions: [
-            ["tomorrow", "n", "あした in casual speech. Also read あす."],
-          ]},
-          "資料": { reading: "しりょう", lemma: "資料", romaji: "shiryō", kanji: [["資", "resources"], ["料", "materials"]], definitions: [
-            ["materials; documents", "n", "The papers or files for something."],
-          ]},
-          "でも": { reading: "でも", lemma: "でも", romaji: "demo", kanji: [], definitions: [
-            ["but", "conj", "Turns the sentence the other way."],
-          ]},
-          "ぜんぜん": { reading: "ぜんぜん", lemma: "全然", romaji: "zenzen", kanji: [["全", "whole"], ["然", "sort of thing"]], definitions: [
-            ["(not) at all; (not) in the slightest", "adv", "With a negative sentence."],
-            ["wholly; entirely; completely", "adv", "The older, positive sense."],
-          ]},
-          "わかんない": { reading: "わかる", lemma: "分かる", romaji: "wakaru", kanji: [["分", "understand"]], definitions: [
-            ["to understand; to get it", "v", "わかんない is わからない, with ら melted into ん."],
-          ]},
-          "ごめん": { reading: "ごめん", lemma: "ごめん", romaji: "gomen", kanji: [], definitions: [
-            ["sorry", "int", "Casual ごめんなさい."],
-          ]},
-          "私": { reading: "わたし", lemma: "私", romaji: "watashi", kanji: [["私", "I"]], definitions: [
-            ["I; me", "pn", "Neutral. あたし is the softer casual reading."],
-          ]},
-          "行か": { reading: "いく", lemma: "行く", romaji: "iku", kanji: [["行", "go"]], definitions: [
-            ["to go", "v", "行か is the shape it takes before ない."],
-          ]},
-          "なきゃ": { reading: "なきゃ", lemma: "なきゃ", romaji: "nakya", kanji: [], definitions: [
-            ["have to", "—", "なければならない, cut down to its first beat."],
-          ]},
-          "終電": { reading: "しゅうでん", lemma: "終電", romaji: "shūden", kanji: [["終", "end"], ["電", "train"]], definitions: [
-            ["last train", "n", "Short for 最終電車."],
-          ]},
-          "なくなっ": { reading: "なくなる", lemma: "なくなる", romaji: "nakunaru", kanji: [], definitions: [
-            ["to be gone; to disappear", "v", "なくなっ is the stem before ちゃう."],
-          ]},
-          "ちゃう": { reading: "ちゃう", lemma: "ちゃう", romaji: "chau", kanji: [], definitions: [
-            ["and that would be bad", "—", "Short for てしまう. The outcome is unwanted."],
-          ]},
-          "マジ": { reading: "マジ", lemma: "マジ", romaji: "maji", kanji: [], definitions: [
-            ["seriously; for real", "adv", "Slang for 本当."],
-          ]},
-          "か": { reading: "か", lemma: "か", romaji: "ka", kanji: [], definitions: [
-            ["?", "prt", "Turns the word into a surprised question."],
-          ]},
-          "じゃあ": { reading: "じゃあ", lemma: "じゃあ", romaji: "jā", kanji: [], definitions: [
-            ["well then; okay", "conj", "Casual では."],
-          ]},
-          "また": { reading: "また", lemma: "また", romaji: "mata", kanji: [], definitions: [
-            ["again", "adv", "また明日 is the everyday goodbye."],
-          ]},
-        };
-
-        // Furigana for the bubbles, per token: [kanji, reading] pairs, with kana left as plain text.
-        const furigana = {
-          "何": [["何", "なに"]],
-          "明日": [["明日", "あした"]],
-          "資料": [["資料", "しりょう"]],
-          "私": [["私", "わたし"]],
-          "行か": [["行", "い"], "か"],
-          "終電": [["終電", "しゅうでん"]],
-        };
-
-        const phrases = {
-          "まだいた": { reading: "まだいた", lemma: "まだいる", romaji: "mada ita", gloss: "were still here", note: "まだ plus いた, the past of いる.", definitions: [
-            ["were still (here)", "—", "The state hadn't changed: he was still at the office."],
-          ]},
-          "いたの": { reading: "いたの", lemma: "いたの", romaji: "ita no", gloss: "you were here?", note: "の turns the past into a soft question.", definitions: [
-            ["were you (here)?", "—", "いた plus the casual question の."],
-          ]},
-          "まだいたの": { reading: "まだいたの", lemma: "まだいたの", romaji: "mada ita no", gloss: "you were still here?", note: "Surprise that he hasn't left. Soft, not a complaint.", definitions: [
-            ["you were still here?", "—", "まだいた, asked with の."],
-          ]},
-          "何して": { reading: "なにして", lemma: "何して", romaji: "nani shite", gloss: "what are you doing", note: "何 plus して, the て-form of する.", definitions: [
-            ["what are you doing", "—", "Often なんして before の, as in 何してんの."],
-          ]},
-          "してん": { reading: "してん", lemma: "している", romaji: "shiten", gloss: "doing", note: "している squeezed into してん.", definitions: [
-            ["doing", "—", "している → してる → してん, before の."],
-          ]},
-          "んの": { reading: "んの", lemma: "んの", romaji: "n no", gloss: "a soft question", note: "ん stands in for る, and の asks.", definitions: [
-            ["a soft question", "—", "The squeezed ending of しているの."],
-          ]},
-          "何してん": { reading: "なにしてん", lemma: "何している", romaji: "nani shiten", gloss: "what are you doing", note: "何している, with る melted into ん.", definitions: [
-            ["what are you doing", "—", "何して plus ん, the squashed る of ている."],
-          ]},
-          "してんの": { reading: "してんの", lemma: "しているの", romaji: "shiten no", gloss: "are you doing?", note: "しているの, squeezed. の keeps the question soft.", definitions: [
-            ["are you doing?", "—", "してんの is しているの in casual speech."],
-          ]},
-          "明日の": { reading: "あしたの", lemma: "明日の", romaji: "ashita no", gloss: "tomorrow's", note: "の links 明日 to the noun that follows.", definitions: [
-            ["tomorrow's", "—", "明日の資料: the materials for tomorrow."],
-          ]},
-          "の資料": { reading: "のしりょう", lemma: "の資料", romaji: "no shiryō", gloss: "the materials for", note: "の ties the previous word to 資料.", definitions: [
-            ["materials for (something)", "—", "の marks what the 資料 belong to."],
-          ]},
-          "明日の資料": { reading: "あしたのしりょう", lemma: "明日の資料", romaji: "ashita no shiryō", gloss: "tomorrow's materials", note: "What he's still at the office working on.", definitions: [
-            ["tomorrow's materials", "n", "The documents for tomorrow."],
-          ]},
-          "ぜんぜんわかんない": { reading: "ぜんぜんわかんない", lemma: "全然分からない", romaji: "zenzen wakannai", gloss: "don't get it at all", note: "ぜんぜん pairs with the negative. わかんない is わからない.", definitions: [
-            ["to not understand at all", "—", "全然〜ない. わかんない melts ら into ん."],
-          ]},
-          "なくなっちゃう": { reading: "なくなっちゃう", lemma: "なくなってしまう", romaji: "nakunacchau", gloss: "I'll miss it", note: "なくなる plus ちゃう: it'll be gone, and that would be bad.", definitions: [
-            ["it'll end up gone", "—", "なくなってしまう. Here, she'll miss the last train."],
-          ]},
-          "マジか": { reading: "マジか", lemma: "マジか", romaji: "maji ka", gloss: "seriously?", note: "か makes it a surprised question.", definitions: [
-            ["seriously?; for real?", "—", "マジ plus the question か."],
-          ]},
-          "また明日": { reading: "またあした", lemma: "また明日", romaji: "mata ashita", gloss: "see you tomorrow", note: "また plus 明日. The everyday goodbye.", definitions: [
-            ["see you tomorrow", "—", "He lets her go."],
-          ]},
-          "行かなきゃ": { reading: "いかなきゃ", lemma: "行かなければならない", romaji: "ikanakya", gloss: "have to go", note: "行く plus なきゃ. なければならない, cut down.", definitions: [
-            ["have to go", "—", "行かなければならない, shortened to 行かなきゃ."],
-          ]},
-        };
+        const { scene, dict, furigana, phrases } = buildDemo();
 
         const stage = document.getElementById("stage");
         const chat = document.getElementById("chat");
@@ -217,30 +109,53 @@ export function initHome() {
         const lexRule = document.getElementById("lex-rule");
         const defsBlock = document.getElementById("defs-block");
         const defsEl = document.getElementById("defs");
+        const playButton = document.getElementById("play-demo");
         let openLine = -1;
         let scrubbing = false;
         let anchorIndex = -1;
+        let playing = false;
+        let raf = 0;
+
+        const audio = new Audio("/demo/takoyaki-booth.m4a");
+        audio.preload = "auto";
 
         function pieces(line) {
-          let rest = line.japanese;
           const out = [];
-          line.words.forEach((word, index) => {
-            const at = rest.indexOf(word[0]);
-            if (at < 0) return;
-            if (at > 0) out.push({ text: rest.slice(0, at) });
-            out.push({ text: word[0], index });
-            rest = rest.slice(at + word[0].length);
+          let cursor = 0;
+          line.tokens.forEach((token, index) => {
+            if (token.charStart > cursor) {
+              out.push({ text: line.japanese.slice(cursor, token.charStart) });
+            }
+            out.push({ text: token.surface, index });
+            cursor = token.charEnd;
           });
-          if (rest) out.push({ text: rest });
+          if (cursor < line.japanese.length) out.push({ text: line.japanese.slice(cursor) });
           return out;
+        }
+
+        function appendFurigana(word, surface) {
+          (furigana[surface] || [surface]).forEach((part) => {
+            if (typeof part === "string") {
+              word.append(part);
+              return;
+            }
+            const ruby = document.createElement("ruby");
+            const rt = document.createElement("rt");
+            rt.textContent = part[1];
+            ruby.append(part[0], rt);
+            word.append(ruby);
+          });
         }
 
         function renderChat() {
           chat.replaceChildren();
           scene.forEach((line, index) => {
+            const turn = document.createElement("div");
+            turn.className = "turn " + line.side;
             const row = document.createElement("button");
             row.type = "button";
             row.className = "line " + line.side + (index === openLine ? " on" : "");
+            row.dataset.line = String(index);
             row.setAttribute("aria-pressed", index === openLine ? "true" : "false");
             const who = document.createElement("span");
             who.className = "who";
@@ -258,19 +173,12 @@ export function initHome() {
                 text.append(piece.text);
                 return;
               }
+              const token = line.tokens[piece.index];
               const word = document.createElement("span");
-              word.className = "w";
-              (furigana[piece.text] || [piece.text]).forEach((part) => {
-                if (typeof part === "string") {
-                  word.append(part);
-                  return;
-                }
-                const ruby = document.createElement("ruby");
-                const rt = document.createElement("rt");
-                rt.textContent = part[1];
-                ruby.append(part[0], rt);
-                word.append(ruby);
-              });
+              word.className = "w" + (token.highlight ? " vocab" : "");
+              word.dataset.index = String(piece.index);
+              if (token.tip) word.dataset.tip = token.tip;
+              appendFurigana(word, piece.text);
               text.append(word);
             });
             bubble.append(text);
@@ -279,13 +187,45 @@ export function initHome() {
             en.className = "en";
             en.textContent = line.english;
             row.append(who, shell, en);
-            row.addEventListener("click", () => openLineAt(index));
-            chat.append(row);
+            row.addEventListener("click", (event) => {
+              const vocab = event.target.closest?.(".vocab");
+              openLineAt(index);
+              if (vocab) {
+                const tokenIndex = Number(vocab.dataset.index);
+                showSpan(scene[index], tokenIndex, tokenIndex);
+              }
+            });
+            turn.append(row);
+            line.nuances.forEach((item) => {
+              const callout = document.createElement("button");
+              callout.type = "button";
+              callout.className = "callout";
+              callout.setAttribute("aria-expanded", "false");
+              const kicker = document.createElement("span");
+              kicker.className = "card-kicker";
+              kicker.textContent = "Nuance";
+              const label = document.createElement("span");
+              label.className = "meaning";
+              label.textContent = item.label;
+              const note = document.createElement("span");
+              note.className = "note";
+              note.textContent = item.note;
+              note.hidden = true;
+              callout.append(kicker, label, note);
+              callout.addEventListener("click", () => {
+                const open = callout.getAttribute("aria-expanded") === "true";
+                callout.setAttribute("aria-expanded", open ? "false" : "true");
+                note.hidden = open;
+                syncPush();
+              });
+              turn.append(callout);
+            });
+            chat.append(turn);
           });
         }
 
         function fillReading(gloss, note, entry, options = {}) {
-          const showDefinitions = options.definitions !== false;
+          const showDefinitions = options.definitions !== false && entry.definitions?.length;
           tokenTip.hidden = true;
           wordPanel.hidden = false;
           glossMeaning.textContent = gloss;
@@ -294,6 +234,7 @@ export function initHome() {
           entryRead.textContent = entry.reading;
           entryLemma.textContent = entry.lemma;
           entryRoma.textContent = entry.romaji;
+          entryRoma.hidden = !entry.romaji;
           kanjiEl.replaceChildren();
           kanjiBlock.hidden = entry.kanji.length === 0;
           entry.kanji.forEach((item) => {
@@ -363,7 +304,9 @@ export function initHome() {
             const word = line.words[start];
             const entry = dict[word[0]];
             if (!entry) return;
-            fillReading(word[1], word[2], entry);
+            fillReading(word[1] || entry.reading, word[2], entry, {
+              definitions: entry.definitions.length > 0,
+            });
             syncPush();
             return;
           }
@@ -454,8 +397,8 @@ export function initHome() {
           wordPanel.hidden = true;
           stage.classList.add("open");
           reading.setAttribute("aria-hidden", "false");
-          chat.querySelectorAll(".line").forEach((row, index) => {
-            const selected = index === openLine;
+          chat.querySelectorAll(".line").forEach((row) => {
+            const selected = Number(row.dataset.line) === openLine;
             row.classList.toggle("on", selected);
             row.setAttribute("aria-pressed", selected ? "true" : "false");
           });
@@ -468,6 +411,95 @@ export function initHome() {
           if (!token || !sentenceEl.contains(token)) return null;
           return token;
         }
+
+        function atTime(time) {
+          let lineIndex = 0;
+          for (let i = 0; i < scene.length; i++) {
+            if (time >= scene[i].start) lineIndex = i;
+          }
+          const tokens = scene[lineIndex].tokens;
+          let tokenIndex = 0;
+          for (let i = 0; i < tokens.length; i++) {
+            if (time >= tokens[i].start) tokenIndex = i;
+          }
+          return { lineIndex, tokenIndex };
+        }
+
+        function paintKaraoke(time) {
+          const { lineIndex, tokenIndex } = atTime(time);
+          chat.querySelectorAll(".line").forEach((row) => {
+            const index = Number(row.dataset.line);
+            row.classList.toggle("live", playing && index === lineIndex);
+          });
+          chat.querySelectorAll(".w").forEach((word) => {
+            const row = word.closest(".line");
+            const index = Number(row?.dataset.line);
+            word.classList.toggle(
+              "sing",
+              playing && index === lineIndex && Number(word.dataset.index) === tokenIndex,
+            );
+          });
+          if (openLine === lineIndex) {
+            sentenceEl.querySelectorAll(".tok").forEach((token) => {
+              token.classList.toggle("on", playing && Number(token.dataset.index) === tokenIndex);
+            });
+            paintHighlight();
+          }
+        }
+
+        function setPlaying(next) {
+          playing = next;
+          stage.classList.toggle("playing", playing);
+          playButton.setAttribute("aria-pressed", playing ? "true" : "false");
+          playButton.setAttribute(
+            "aria-label",
+            playing ? "Pause Takoyaki booth dialogue" : "Play Takoyaki booth dialogue",
+          );
+          playButton.classList.toggle("on", playing);
+          if (!playing) paintKaraoke(audio.currentTime);
+        }
+
+        function stopPlayback() {
+          playing = false;
+          cancelAnimationFrame(raf);
+          audio.pause();
+          setPlaying(false);
+          paintKaraoke(0);
+          chat.querySelectorAll(".w.sing, .line.live").forEach((node) => {
+            node.classList.remove("sing", "live");
+          });
+        }
+
+        function tick() {
+          if (!playing) return;
+          const time = audio.currentTime;
+          if (time >= CLIP_END || audio.ended) {
+            stopPlayback();
+            return;
+          }
+          paintKaraoke(time);
+          raf = requestAnimationFrame(tick);
+        }
+
+        playButton.addEventListener("click", () => {
+          if (playing) {
+            cancelAnimationFrame(raf);
+            audio.pause();
+            setPlaying(false);
+            return;
+          }
+          if (audio.ended || audio.currentTime >= CLIP_END - 0.05) {
+            audio.currentTime = 0;
+          }
+          const start = audio.play();
+          const go = () => {
+            setPlaying(true);
+            raf = requestAnimationFrame(tick);
+          };
+          if (start && typeof start.then === "function") start.then(go).catch(() => setPlaying(false));
+          else go();
+        });
+        audio.addEventListener("ended", () => stopPlayback());
 
         sentenceEl.addEventListener("pointerdown", (event) => {
           const token = tokenFrom(event);
@@ -583,4 +615,10 @@ export function initHome() {
       button.disabled = false;
     }
   });
+
+  return () => {
+    cancelAnimationFrame(raf);
+    audio.pause();
+    audio.src = "";
+  };
 }
