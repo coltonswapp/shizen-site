@@ -9,7 +9,6 @@ const CLIP_END = demo.audio.clipEnd ?? 10.4;
 
 function buildDemo() {
   const highlights = demo.highlights;
-  const nuances = demo.nuances.filter((item) => !item.optional);
   const dict = {};
   const furigana = {};
   const phrases = {};
@@ -19,18 +18,12 @@ function buildDemo() {
       const highlight = highlights.find(
         (item) => item.line === line.index && item.tokenStart === tokenIndex,
       );
-      const nuance = nuances.find(
-        (item) =>
-          item.line === line.index &&
-          tokenIndex >= item.tokenStart &&
-          tokenIndex <= item.tokenEnd,
-      );
       const start =
         token.surface === "待ってて" ? MATTETE_HIGHLIGHT_START : token.start;
       return {
         surface: token.surface,
-        gloss: highlight?.gloss || nuance?.label || "",
-        note: nuance?.note || "",
+        gloss: highlight?.gloss || "",
+        note: "",
         reading: token.reading || token.surface,
         start,
         end: token.end,
@@ -51,25 +44,10 @@ function buildDemo() {
           lemma: word.surface,
           romaji: "",
           kanji: [],
-          definitions: word.gloss ? [[word.gloss, "—", word.note]] : [],
+          definitions: word.gloss ? [[word.gloss, "—", ""]] : [],
         };
       }
     });
-
-    nuances
-      .filter((item) => item.line === line.index && item.tokenEnd > item.tokenStart)
-      .forEach((item) => {
-        const span = words.slice(item.tokenStart, item.tokenEnd + 1);
-        const surface = span.map((word) => word.surface).join("");
-        phrases[surface] = {
-          reading: span.map((word) => word.reading).join(""),
-          lemma: surface,
-          romaji: "",
-          gloss: item.label,
-          note: item.note,
-          definitions: [[item.label, "—", item.note]],
-        };
-      });
 
     return {
       speaker: line.speaker,
@@ -80,7 +58,6 @@ function buildDemo() {
       end: line.end,
       words: words.map((word) => [word.surface, word.gloss, word.note]),
       tokens: words,
-      nuances: nuances.filter((item) => item.line === line.index),
     };
   });
 
@@ -150,8 +127,6 @@ export function initHome() {
         function renderChat() {
           chat.replaceChildren();
           scene.forEach((line, index) => {
-            const turn = document.createElement("div");
-            turn.className = "turn " + line.side;
             const row = document.createElement("button");
             row.type = "button";
             row.className = "line " + line.side + (index === openLine ? " on" : "");
@@ -195,32 +170,7 @@ export function initHome() {
                 showSpan(scene[index], tokenIndex, tokenIndex);
               }
             });
-            turn.append(row);
-            line.nuances.forEach((item) => {
-              const callout = document.createElement("button");
-              callout.type = "button";
-              callout.className = "callout";
-              callout.setAttribute("aria-expanded", "false");
-              const kicker = document.createElement("span");
-              kicker.className = "card-kicker";
-              kicker.textContent = "Nuance";
-              const label = document.createElement("span");
-              label.className = "meaning";
-              label.textContent = item.label;
-              const note = document.createElement("span");
-              note.className = "note";
-              note.textContent = item.note;
-              note.hidden = true;
-              callout.append(kicker, label, note);
-              callout.addEventListener("click", () => {
-                const open = callout.getAttribute("aria-expanded") === "true";
-                callout.setAttribute("aria-expanded", open ? "false" : "true");
-                note.hidden = open;
-                syncPush();
-              });
-              turn.append(callout);
-            });
-            chat.append(turn);
+            chat.append(row);
           });
         }
 

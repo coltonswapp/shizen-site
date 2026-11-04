@@ -259,49 +259,5 @@
    "source": "studio.highlights.vocabulary"
   }
  ],
- "nuances": [
-  {
-   "line": 0,
-   "tokenStart": 3,
-   "tokenEnd": 4,
-   "label": "匂いする — no が",
-   "note": "Textbooks say 匂いがする. In casual speech the が just drops: 匂いする, \"I smell…\".",
-   "source": "written"
-  },
-  {
-   "line": 2,
-   "tokenStart": 0,
-   "tokenEnd": 0,
-   "label": "食べたくない？ — an invitation",
-   "note": "Literally \"Don't you want to eat?\" With rising intonation, this negative question is a casual invitation: \"Want some?\"",
-   "source": "written; studio contextNote \"〜くない？: 食べたくない？\" (U2 L2.3)"
-  },
-  {
-   "line": 3,
-   "tokenStart": 0,
-   "tokenEnd": 0,
-   "label": "めっちゃ — casual \"really\"",
-   "note": "Casual intensifier, originally Kansai, now everywhere: めっちゃ食べたい = \"I really want some.\"",
-   "source": "written"
-  },
-  {
-   "line": 4,
-   "tokenStart": 6,
-   "tokenEnd": 6,
-   "label": "待ってて — dropped い",
-   "note": "Spoken contraction of 待っていて, \"wait (here) for me.\" The い in 〜ていて drops in casual speech.",
-   "source": "written",
-   "optional": true
-  },
-  {
-   "line": 4,
-   "tokenStart": 4,
-   "tokenEnd": 4,
-   "label": "〜よ — telling, not asking",
-   "note": "Sentence-final よ marks new info for the listener: \"I'll go buy some (I'm telling you).\"",
-   "source": "written",
-   "optional": true
-  }
- ],
  "readingSource": "written (Studio tokenSync has no readings)"
 }
