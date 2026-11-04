@@ -50,9 +50,17 @@ export function HomePage() {
         <div className="thread">
           <div className="intro">
             <div>
-              <p className="setting">Still at the office</p>
+              <p className="setting">Festival Day · N4</p>
               <h2>Tap a line. Take it apart.</h2>
             </div>
+            <button type="button" className="play" id="play-demo" aria-label="Play Takoyaki booth dialogue" aria-pressed="false">
+              <svg className="play-icon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                <path d="M5 3.2v11.6L15 9 5 3.2Z" fill="currentColor" />
+              </svg>
+              <svg className="pause-icon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                <path d="M4.5 3.5h3v11h-3v-11Zm6 0h3v11h-3v-11Z" fill="currentColor" />
+              </svg>
+            </button>
           </div>
           <section className="conversation" id="chat" aria-label="Conversation"></section>
         </div>

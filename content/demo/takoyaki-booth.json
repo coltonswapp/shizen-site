@@ -1,0 +1,263 @@
+{
+ "sceneId": "festival-day/takoyaki-booth",
+ "title": "Takoyaki booth",
+ "collection": "Festival Day",
+ "level": "N4",
+ "setting": "Takoyaki stall at a festival; friends Kaito and Mika.",
+ "source": {
+  "studioScene": "festival-day/takoyaki-booth",
+  "publishedVariantId": "bea1579d-9760-4a7d-873c-fe8bdca7a5e2",
+  "publishedContentHash": "f440b6ccc54208ffe9e2fbf7adeb469af1af805717b15eb072345a9a79ae995c",
+  "publishedAt": "2026-09-16T20:05:39.752Z",
+  "pulled": "2026-11-03"
+ },
+ "audio": {
+  "url": "/demo/takoyaki-booth.m4a",
+  "kind": "scene-mix",
+  "format": "audio/mp4 (AAC, 24 kHz mono)",
+  "fullDurationSeconds": 29.84,
+  "clipStart": 0,
+  "clipEnd": 10.4,
+  "lastSpeechEnd": 10.19,
+  "timingNote": "All times are seconds from the start of this file. Play 0 to clipEnd (fade out ~0.15s); line 6 (はい) doesn't start until ~11.46s. Token end = next token start; line-final end measured from waveform.",
+  "corsNote": "cdn.shizenapp.com sends no Access-Control-Allow-Origin. Plain <audio src> playback works; fetch()/Web Audio needs CORS or a self-hosted copy.",
+  "sourceUrl": "https://cdn.shizenapp.com/dialogue/festival-day/takoyaki-booth/f440b6ccc54208ffe9e2fbf7adeb469af1af805717b15eb072345a9a79ae995c-bea1579d-9760-4a7d-873c-fe8bdca7a5e2.m4a",
+  "hosted": "public/demo/takoyaki-booth.m4a — trimmed 0–10.4s with 0.15s fade-out"
+ },
+ "thumbnail": "https://cdn.shizenapp.com/dialogue/festival-day/takoyaki-booth/thumbnail-185f2fdb6da1-512.webp",
+ "lines": [
+  {
+   "index": 0,
+   "speaker": "Kaito",
+   "japanese": "あ、たこ焼きの匂いする。",
+   "romaji": "A, takoyaki no nioi suru.",
+   "english": "Oh, I smell takoyaki.",
+   "start": 0,
+   "end": 1.96,
+   "tokens": [
+    {
+     "surface": "あ",
+     "start": 0,
+     "end": 0.757,
+     "charStart": 0,
+     "charEnd": 1
+    },
+    {
+     "surface": "たこ焼き",
+     "start": 0.757,
+     "end": 1.193,
+     "charStart": 2,
+     "charEnd": 6,
+     "reading": "たこやき"
+    },
+    {
+     "surface": "の",
+     "start": 1.193,
+     "end": 1.418,
+     "charStart": 6,
+     "charEnd": 7
+    },
+    {
+     "surface": "匂い",
+     "start": 1.418,
+     "end": 1.706,
+     "charStart": 7,
+     "charEnd": 9,
+     "reading": "におい"
+    },
+    {
+     "surface": "する",
+     "start": 1.706,
+     "end": 1.96,
+     "charStart": 9,
+     "charEnd": 11
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "speaker": "Mika",
+   "japanese": "ほんとだ。あそこの屋台だ。",
+   "romaji": "Honto da. Asoko no yatai da.",
+   "english": "You're right. It's that stall over there.",
+   "start": 2.223,
+   "end": 4.84,
+   "tokens": [
+    {
+     "surface": "ほんと",
+     "start": 2.223,
+     "end": 2.785,
+     "charStart": 0,
+     "charEnd": 3
+    },
+    {
+     "surface": "だ",
+     "start": 2.785,
+     "end": 3.669,
+     "charStart": 3,
+     "charEnd": 4
+    },
+    {
+     "surface": "あそこ",
+     "start": 3.669,
+     "end": 3.986,
+     "charStart": 5,
+     "charEnd": 8
+    },
+    {
+     "surface": "の",
+     "start": 3.986,
+     "end": 4.194,
+     "charStart": 8,
+     "charEnd": 9
+    },
+    {
+     "surface": "屋台",
+     "start": 4.194,
+     "end": 4.508,
+     "charStart": 9,
+     "charEnd": 11,
+     "reading": "やたい"
+    },
+    {
+     "surface": "だ",
+     "start": 4.508,
+     "end": 4.84,
+     "charStart": 11,
+     "charEnd": 12
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "speaker": "Kaito",
+   "japanese": "食べたくない？",
+   "romaji": "Tabetakunai?",
+   "english": "Don't you want some?",
+   "start": 5.028,
+   "end": 5.99,
+   "tokens": [
+    {
+     "surface": "食べたくない",
+     "start": 5.028,
+     "end": 5.99,
+     "charStart": 0,
+     "charEnd": 6,
+     "reading": "たべたくない"
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "speaker": "Mika",
+   "japanese": "めっちゃ食べたい。",
+   "romaji": "Meccha tabetai.",
+   "english": "I really want some.",
+   "start": 6.253,
+   "end": 7.57,
+   "tokens": [
+    {
+     "surface": "めっちゃ",
+     "start": 6.253,
+     "end": 6.956,
+     "charStart": 0,
+     "charEnd": 4
+    },
+    {
+     "surface": "食べたい",
+     "start": 6.956,
+     "end": 7.57,
+     "charStart": 4,
+     "charEnd": 8,
+     "reading": "たべたい"
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "speaker": "Kaito",
+   "japanese": "じゃあ、僕が買ってくるよ。ここで待ってて。",
+   "romaji": "Jaa, boku ga katte kuru yo. Koko de mattete.",
+   "english": "Alright, I'll go buy some. Wait here.",
+   "start": 7.719,
+   "end": 10.19,
+   "tokens": [
+    {
+     "surface": "じゃあ",
+     "start": 7.719,
+     "end": 8.499,
+     "charStart": 0,
+     "charEnd": 3
+    },
+    {
+     "surface": "僕",
+     "start": 8.499,
+     "end": 8.786,
+     "charStart": 4,
+     "charEnd": 5,
+     "reading": "ぼく"
+    },
+    {
+     "surface": "が",
+     "start": 8.786,
+     "end": 8.997,
+     "charStart": 5,
+     "charEnd": 6
+    },
+    {
+     "surface": "買ってくる",
+     "start": 8.997,
+     "end": 9.248,
+     "charStart": 6,
+     "charEnd": 11,
+     "reading": "かってくる"
+    },
+    {
+     "surface": "よ",
+     "start": 9.248,
+     "end": 9.763,
+     "charStart": 11,
+     "charEnd": 12
+    },
+    {
+     "surface": "ここで",
+     "start": 9.763,
+     "end": 10.078,
+     "charStart": 13,
+     "charEnd": 16
+    },
+    {
+     "surface": "待ってて",
+     "start": 10.078,
+     "end": 10.19,
+     "charStart": 16,
+     "charEnd": 20,
+     "reading": "まってて"
+    }
+   ]
+  }
+ ],
+ "highlights": [
+  {
+   "line": 0,
+   "tokenStart": 1,
+   "tokenEnd": 1,
+   "surface": "たこ焼き",
+   "reading": "たこやき",
+   "gloss": "takoyaki — grilled octopus balls, a festival-stall classic",
+   "glossSource": "written",
+   "source": "studio.highlights.vocabulary"
+  },
+  {
+   "line": 1,
+   "tokenStart": 4,
+   "tokenEnd": 4,
+   "surface": "屋台",
+   "reading": "やたい",
+   "gloss": "food stall / street stand (the kind lining a festival)",
+   "glossSource": "written",
+   "source": "studio.highlights.vocabulary"
+  }
+ ],
+ "readingSource": "written (Studio tokenSync has no readings)"
+}
