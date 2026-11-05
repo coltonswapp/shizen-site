@@ -7,23 +7,103 @@ import demo from "@/content/demo/takoyaki-booth.json";
 const MATTETE_HIGHLIGHT_START = 9.95;
 const CLIP_END = demo.audio.clipEnd ?? 10.4;
 
+const dict = {
+  "あ": { reading: "あ", lemma: "あ", romaji: "a", kanji: [], gloss: "oh", note: "A little sound of noticing.", definitions: [
+    ["oh; ah", "int", "He just caught the smell."],
+  ]},
+  "たこ焼き": { reading: "たこやき", lemma: "たこ焼き", romaji: "takoyaki", kanji: [["焼", "grill"]], gloss: "takoyaki — grilled octopus balls, a festival-stall classic", note: "", definitions: [
+    ["takoyaki; grilled octopus balls", "n", "A festival-stall classic."],
+  ]},
+  "の": { reading: "の", lemma: "の", romaji: "no", kanji: [], gloss: "'s, of", note: "Links the two nouns: takoyaki's smell, that stall over there.", definitions: [
+    ["'s; of", "prt", "Ties たこ焼き to 匂い, and あそこ to 屋台."],
+  ]},
+  "匂い": { reading: "におい", lemma: "匂い", romaji: "nioi", kanji: [["匂", "smell"]], gloss: "smell", note: "", definitions: [
+    ["smell; scent", "n", "Here, the smell of the stall."],
+  ]},
+  "する": { reading: "する", lemma: "する", romaji: "suru", kanji: [], gloss: "there's (a smell)", note: "匂いがする with the が dropped.", definitions: [
+    ["to do; there is (a smell)", "v", "With 匂い: I smell it."],
+  ]},
+  "ほんと": { reading: "ほんと", lemma: "ほんと", romaji: "honto", kanji: [], gloss: "you're right", note: "Casual 本当.", definitions: [
+    ["really; it's true", "adv", "She's agreeing: you're right."],
+  ]},
+  "だ": { reading: "だ", lemma: "だ", romaji: "da", kanji: [], gloss: "it is", note: "Plain copula. ほんとだ, 屋台だ.", definitions: [
+    ["is; it is", "cop", "Ends a casual statement."],
+  ]},
+  "あそこ": { reading: "あそこ", lemma: "あそこ", romaji: "asoko", kanji: [], gloss: "over there", note: "Away from both of them.", definitions: [
+    ["over there", "pn", "The stall they're looking at."],
+  ]},
+  "屋台": { reading: "やたい", lemma: "屋台", romaji: "yatai", kanji: [["屋", "shop"], ["台", "stand"]], gloss: "food stall / street stand (the kind lining a festival)", note: "", definitions: [
+    ["food stall; street stand", "n", "The kind lining a festival."],
+  ]},
+  "食べたくない": { reading: "たべたくない", lemma: "食べたくない", romaji: "tabetakunai", kanji: [["食", "eat"]], gloss: "don't you want some?", note: "A negative question, used as a casual invitation.", definitions: [
+    ["don't want to eat?", "v", "Rising 〜たくない？ means \"want some?\""],
+  ]},
+  "めっちゃ": { reading: "めっちゃ", lemma: "めっちゃ", romaji: "meccha", kanji: [], gloss: "really", note: "Casual intensifier. めっちゃ食べたい.", definitions: [
+    ["really; so", "adv", "Originally Kansai, now everywhere."],
+  ]},
+  "食べたい": { reading: "たべたい", lemma: "食べたい", romaji: "tabetai", kanji: [["食", "eat"]], gloss: "want to eat", note: "", definitions: [
+    ["want to eat", "v", "たい on 食べる."],
+  ]},
+  "じゃあ": { reading: "じゃあ", lemma: "じゃあ", romaji: "jā", kanji: [], gloss: "alright", note: "Casual では. He's deciding.", definitions: [
+    ["well then; alright", "conj", "Moves them into action."],
+  ]},
+  "僕": { reading: "ぼく", lemma: "僕", romaji: "boku", kanji: [["僕", "I"]], gloss: "I", note: "", definitions: [
+    ["I; me", "pn", "Casual, typically masculine."],
+  ]},
+  "が": { reading: "が", lemma: "が", romaji: "ga", kanji: [], gloss: "I'll (subject)", note: "Marks 僕 as the one who goes.", definitions: [
+    ["subject marker", "prt", "僕が買ってくる: I'll go buy some."],
+  ]},
+  "買ってくる": { reading: "かってくる", lemma: "買ってくる", romaji: "katte kuru", kanji: [["買", "buy"]], gloss: "go buy some", note: "て-form of 買う plus くる: go buy and come back.", definitions: [
+    ["to go buy (and come back)", "v", "買ってくる, not just 買う."],
+  ]},
+  "よ": { reading: "よ", lemma: "よ", romaji: "yo", kanji: [], gloss: "I'm telling you", note: "Marks this as new info for her.", definitions: [
+    ["I'm telling you", "prt", "I'll go buy some (you should know)."],
+  ]},
+  "ここで": { reading: "ここで", lemma: "ここで", romaji: "koko de", kanji: [], gloss: "here", note: "この場所で. Wait at this spot.", definitions: [
+    ["here; at this place", "—", "ここで待ってて: wait here."],
+  ]},
+  "待ってて": { reading: "まってて", lemma: "待ってて", romaji: "mattete", kanji: [["待", "wait"]], gloss: "wait (for me)", note: "待っていて with the い dropped.", definitions: [
+    ["wait (here) for me", "v", "Casual 待っていて."],
+  ]},
+};
+
+const phrases = {
+  "たこ焼きの": { reading: "たこやきの", lemma: "たこ焼きの", romaji: "takoyaki no", gloss: "takoyaki's", note: "の links たこ焼き to the smell that follows." },
+  "の匂い": { reading: "のにおい", lemma: "の匂い", romaji: "no nioi", gloss: "the smell of", note: "の ties the previous word to 匂い." },
+  "匂いする": { reading: "においする", lemma: "匂いする", romaji: "nioi suru", gloss: "I smell…", note: "Textbooks say 匂いがする. In casual speech the が drops." },
+  "たこ焼きの匂い": { reading: "たこやきのにおい", lemma: "たこ焼きの匂い", romaji: "takoyaki no nioi", gloss: "the smell of takoyaki", note: "What he caught walking by." },
+  "の匂いする": { reading: "のにおいする", lemma: "の匂いする", romaji: "no nioi suru", gloss: "I smell…", note: "の匂い plus する: there's the smell of it." },
+  "ほんとだ": { reading: "ほんとだ", lemma: "ほんとだ", romaji: "honto da", gloss: "you're right", note: "ほんと plus だ. She's agreeing." },
+  "あそこの": { reading: "あそこの", lemma: "あそこの", romaji: "asoko no", gloss: "that … over there", note: "の points 屋台 to the stall they're looking at." },
+  "の屋台": { reading: "のやたい", lemma: "の屋台", romaji: "no yatai", gloss: "the stall of", note: "の ties the previous word to 屋台." },
+  "屋台だ": { reading: "やたいだ", lemma: "屋台だ", romaji: "yatai da", gloss: "it's a stall", note: "だ closes it: that's the one." },
+  "あそこの屋台": { reading: "あそこのやたい", lemma: "あそこの屋台", romaji: "asoko no yatai", gloss: "that stall over there", note: "The stall they're both looking at." },
+  "の屋台だ": { reading: "のやたいだ", lemma: "の屋台だ", romaji: "no yatai da", gloss: "it's that stall", note: "の屋台 plus だ." },
+  "めっちゃ食べたい": { reading: "めっちゃたべたい", lemma: "めっちゃ食べたい", romaji: "meccha tabetai", gloss: "I really want some", note: "めっちゃ intensifies 食べたい." },
+  "僕が": { reading: "ぼくが", lemma: "僕が", romaji: "boku ga", gloss: "I'll", note: "が marks 僕 as the one who goes." },
+  "が買ってくる": { reading: "がかってくる", lemma: "が買ってくる", romaji: "ga katte kuru", gloss: "I'll go buy", note: "が plus 買ってくる: he's the one going." },
+  "買ってくるよ": { reading: "かってくるよ", lemma: "買ってくるよ", romaji: "katte kuru yo", gloss: "I'll go get some", note: "よ tells her this; he's not asking." },
+  "僕が買ってくる": { reading: "ぼくがかってくる", lemma: "僕が買ってくる", romaji: "boku ga katte kuru", gloss: "I'll go buy some", note: "僕が plus 買ってくる: he goes, then comes back." },
+  "が買ってくるよ": { reading: "がかってくるよ", lemma: "が買ってくるよ", romaji: "ga katte kuru yo", gloss: "I'll go get some", note: "買ってくる plus よ: he's telling her." },
+  "ここで待ってて": { reading: "ここでまってて", lemma: "ここで待ってて", romaji: "koko de mattete", gloss: "wait here", note: "ここで plus 待ってて. 待ってて is 待っていて with the い dropped." },
+};
+
 function buildDemo() {
   const highlights = demo.highlights;
-  const dict = {};
   const furigana = {};
-  const phrases = {};
 
   const scene = demo.lines.map((line) => {
     const words = line.tokens.map((token, tokenIndex) => {
       const highlight = highlights.find(
         (item) => item.line === line.index && item.tokenStart === tokenIndex,
       );
+      const entry = dict[token.surface];
       const start =
         token.surface === "待ってて" ? MATTETE_HIGHLIGHT_START : token.start;
       return {
         surface: token.surface,
-        gloss: highlight?.gloss || "",
-        note: "",
+        gloss: highlight?.gloss || entry?.gloss || "",
+        note: entry?.note || "",
         reading: token.reading || token.surface,
         start,
         end: token.end,
@@ -37,15 +117,6 @@ function buildDemo() {
     words.forEach((word) => {
       if (word.reading && word.reading !== word.surface && !furigana[word.surface]) {
         furigana[word.surface] = [[word.surface, word.reading]];
-      }
-      if (!dict[word.surface]) {
-        dict[word.surface] = {
-          reading: word.reading,
-          lemma: word.surface,
-          romaji: "",
-          kanji: [],
-          definitions: word.gloss ? [[word.gloss, "—", ""]] : [],
-        };
       }
     });
 
@@ -356,7 +427,7 @@ export function initHome() {
         }
 
         function tokenFrom(event) {
-          const hit = document.elementFromPoint(event.clientX, event.clientY);
+          const hit = document.elementFromPoint(event.clientX, event.clientY) || event.target;
           const token = hit && hit.closest ? hit.closest(".tok") : null;
           if (!token || !sentenceEl.contains(token)) return null;
           return token;
@@ -458,7 +529,7 @@ export function initHome() {
           window.getSelection().removeAllRanges();
           scrubbing = true;
           anchorIndex = Number(token.dataset.index);
-          sentenceEl.setPointerCapture(event.pointerId);
+          try { sentenceEl.setPointerCapture(event.pointerId); } catch {}
           showSpan(scene[openLine], anchorIndex, anchorIndex);
         });
         sentenceEl.addEventListener("pointermove", (event) => {
