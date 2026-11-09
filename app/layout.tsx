@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   HOME_DESCRIPTION,
+  HOME_DOCUMENT_TITLE,
   HOME_TITLE,
   SITE_NAME,
   SITE_URL,
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   ...pageMetadata({
     title: HOME_TITLE,
+    documentTitle: HOME_DOCUMENT_TITLE,
     description: HOME_DESCRIPTION,
     path: "/",
-    absoluteTitle: HOME_TITLE,
   }),
   title: {
-    default: HOME_TITLE,
+    default: HOME_DOCUMENT_TITLE,
     template: `%s — ${SITE_NAME}`,
   },
 };
