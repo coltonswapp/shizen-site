@@ -13,10 +13,10 @@ export const HOME_DESCRIPTION =
   "Shizen is an iPhone app for understanding spoken Japanese. Hear a line at full speed, take it apart, then hear it again. Join the waitlist.";
 
 export const OG_IMAGE = {
-  url: "/assets/og-share-1200x630.jpg",
+  url: "/assets/og-yellow-1200x630.jpg",
   width: 1200,
   height: 630,
-  alt: "Shizen wordmark and a sticker illustration beside the iPhone home screen",
+  alt: "Shizen wordmark on yellow with two illustrated characters walking",
   type: "image/jpeg",
 };
 
